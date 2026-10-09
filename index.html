@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FleetPro VMS — Vehicle Management System</title>
+
+<!-- External Libraries -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Custom Styles -->
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============== LOGIN SCREEN ============== -->
+<div id="loginScreen" class="login-bg min-h-screen grid-bg flex items-center justify-center p-4">
+  <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-8 items-center">
+    <!-- Left: Brand -->
+    <div class="hidden lg:block slide-up">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1006" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2-5h11l2 5v5h-2"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="15.5" cy="17.5" r="2"/></svg>
+        </div>
+        <div>
+          <div class="font-display text-2xl font-bold">FleetPro</div>
+          <div class="text-xs" style="color:var(--fg-muted)">Vehicle Management System</div>
+        </div>
+      </div>
+      <h1 class="font-display text-5xl font-bold leading-tight mb-4">Fleet intelligence,<br>at your fingertips.</h1>
+      <p class="text-base mb-8" style="color:var(--fg-muted);max-width:480px">Real-time GPS tracking, fuel control, driver performance, maintenance prediction, and full fleet analytics — built for Ethiopian logistics, NGOs, and government fleets.</p>
+      <div class="grid grid-cols-2 gap-3 max-w-md">
+        <div class="card-soft p-3 flex items-center gap-3"><div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,.15)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div><div><div class="text-sm font-semibold">Real-time GPS</div><div class="text-xs" style="color:var(--fg-muted)">Live vehicle tracking</div></div></div>
+        <div class="card-soft p-3 flex items-center gap-3"><div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,.15)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M3 12h2l3-9 4 18 3-9h6"/></svg></div><div><div class="text-sm font-semibold">Fuel Control</div><div class="text-xs" style="color:var(--fg-muted)">Theft detection</div></div></div>
+        <div class="card-soft p-3 flex items-center gap-3"><div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(6,182,212,.15)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><div><div class="text-sm font-semibold">Maintenance</div><div class="text-xs" style="color:var(--fg-muted)">Predictive service</div></div></div>
+        <div class="card-soft p-3 flex items-center gap-3"><div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(249,115,22,.15)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg></div><div><div class="text-sm font-semibold">Analytics</div><div class="text-xs" style="color:var(--fg-muted)">Fleet reporting</div></div></div>
+      </div>
+    </div>
+
+    <!-- Right: Login form -->
+    <div class="card p-8 slide-up" style="max-width:440px;margin-left:auto">
+      <div class="lg:hidden flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1006" stroke-width="2.5"><path d="M5 17H3v-5l2-5h11l2 5v5h-2"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="15.5" cy="17.5" r="2"/></svg></div>
+        <div class="font-display text-xl font-bold">FleetPro VMS</div>
+      </div>
+      <h2 class="font-display text-2xl font-bold mb-1">Welcome back</h2>
+      <p class="text-sm mb-6" style="color:var(--fg-muted)">Sign in to your fleet dashboard</p>
+      
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="label">Email address</label>
+          <input type="email" id="loginEmail" class="input" required placeholder="Enter your email">
+        </div>
+        <div>
+          <label class="label">Password</label>
+          <input type="password" id="loginPassword" class="input" required placeholder="Enter your password">
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <label class="flex items-center gap-2 cursor-pointer" style="color:var(--fg-muted)"><input type="checkbox"> Remember me</label>
+          <a href="#" class="text-amber-500 hover:underline" style="color:var(--accent)">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-primary w-full justify-center py-3">
+          <span>Sign in to dashboard</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-6 border-t" style="border-color:var(--border)">
+        <div class="text-xs text-center mb-3" style="color:var(--fg-muted)">Guest Access</div>
+        <div class="grid grid-cols-1 gap-2" id="roleQuickLogin">
+          <!-- Only Viewer has quick login access -->
+          <button class="btn-ghost text-xs justify-center" data-role="viewer">Login as Viewer (Guest)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== MAIN APP ============== -->
+<div id="app" class="hidden min-h-screen">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar w-64 fixed left-0 top-0 bottom-0 flex flex-col p-4 z-40" style="background:var(--bg-elev);border-right:1px solid var(--border)">
+    <div class="flex items-center gap-3 px-2 mb-8">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1006" stroke-width="2.5"><path d="M5 17H3v-5l2-5h11l2 5v5h-2"/><circle cx="7.5" cy="17.5" r="2"/><circle cx="15.5" cy="17.5" r="2"/></svg>
+      </div>
+      <div>
+        <div class="font-display text-lg font-bold">FleetPro</div>
+        <div class="text-xs" style="color:var(--fg-muted)">VMS v2.0</div>
+      </div>
+    </div>
+    <nav id="sidebarNav" class="flex-1 space-y-1 overflow-y-auto -ml-4 pl-4"></nav>
+    <div class="card-soft p-3 mt-4">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-2 h-2 rounded-full" style="background:#34d399;box-shadow:0 0 8px #34d399"></div>
+        <div class="text-xs font-medium">System status</div>
+      </div>
+      <div class="text-xs" style="color:var(--fg-muted)">All systems operational</div>
+      <div class="text-xs mt-1" style="color:var(--fg-soft)">8 GPS devices online</div>
+    </div>
+  </aside>
+
+  <!-- Mobile sidebar backdrop -->
+  <div id="sidebarBackdrop" class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden" onclick="toggleSidebar(false)"></div>
+
+  <!-- Main -->
+  <div class="lg:ml-64 flex-1 flex flex-col min-h-screen">
+    <!-- Topbar -->
+    <header class="sticky top-0 z-20 px-4 lg:px-6 py-3 flex items-center gap-3" style="background:rgba(10,13,20,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)">
+      <button class="lg:hidden btn-ghost p-2" onclick="toggleSidebar(true)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div class="hidden md:flex items-center gap-2 flex-1 max-w-md">
+        <div class="relative flex-1">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fg-muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input id="globalSearch" type="text" placeholder="Search vehicles, drivers, trips..." class="input pl-10 py-2">
+        </div>
+      </div>
+      <div class="flex-1 md:hidden"></div>
+      
+      <button class="btn-ghost p-2 relative" onclick="setPage('notifications')" title="Notifications">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span id="notifBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+      </button>
+      
+      <div class="relative">
+        <button id="langBtn" class="btn-ghost p-2" onclick="toggleLangMenu()">
+          <span class="text-sm font-medium" id="langLabel">EN</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M3 12h18M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+        </button>
+        <div id="langMenu" class="hidden absolute right-0 mt-2 card p-2 min-w-[140px] z-50" style="box-shadow:var(--shadow)">
+          <div class="menu-item" onclick="setLanguage('en')"><span>English</span><span class="ml-auto text-xs" style="color:var(--fg-muted)">EN</span></div>
+          <div class="menu-item" onclick="setLanguage('am')"><span>አማርኛ</span><span class="ml-auto text-xs" style="color:var(--fg-muted)">AM</span></div>
+        </div>
+      </div>
+      
+      <button class="btn-ghost p-2" onclick="toggleTheme()" title="Toggle theme">
+        <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      
+      <div class="relative">
+        <button id="profileBtn" class="flex items-center gap-2 p-1 pr-2 rounded-lg hover:bg-white/5" onclick="toggleProfileMenu()">
+          <div id="userAvatar" class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-xs font-bold text-amber-950">AD</div>
+          <div class="hidden sm:block text-left">
+            <div id="userName" class="text-xs font-semibold leading-tight">Admin</div>
+            <div id="userRole" class="text-[10px]" style="color:var(--fg-muted)">Super Admin</div>
+          </div>
+        </button>
+        <div id="profileMenu" class="hidden absolute right-0 mt-2 card p-2 min-w-[200px] z-50" style="box-shadow:var(--shadow)">
+          <div class="menu-item" onclick="setPage('settings')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Settings</span></div>
+          
+          <!-- Change Password Button -->
+          <div class="menu-item" onclick="openChangePasswordModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Change Password</span></div>
+          
+          <div class="menu-item" onclick="logout()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg><span>Sign out</span></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main id="mainContent" class="flex-1 p-4 lg:p-6 fade-in"></main>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="toastContainer" class="fixed top-4 right-4 z-[200] space-y-2"></div>
+<!-- Modal mount -->
+<div id="modalMount"></div>
+
+<!-- Custom Scripts -->
+<script src="script.js"></script>
+</body>
+</html>
